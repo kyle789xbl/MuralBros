@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internal Murals - Mural Bros</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #fafafa;
+            --surface: #ffffff;
+            --text: #0a0a0a;
+            --text-muted: #737373;
+            --accent: #10b981;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --surface: #171717;
+            --text: #fafafa;
+            --text-muted: #a3a3a3;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 2rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(250, 250, 250, 0.8);
+            border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+        }
+
+        [data-theme="dark"] header {
+            background: rgba(10, 10, 10, 0.8);
+            border-bottom: 1px solid rgba(250, 250, 250, 0.1);
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: opacity 0.3s ease;
+        }
+
+        nav a:hover {
+            opacity: 0.6;
+        }
+
+        .theme-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--text);
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-btn:hover {
+            transform: rotate(180deg);
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .hero-service {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            padding: 10rem 4rem 6rem;
+            border-bottom: 1px solid var(--text);
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--text);
+        }
+
+        .service-icon-large {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 2rem;
+            line-height: 1;
+        }
+
+        .lead {
+            font-size: 1.5rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            max-width: 800px;
+        }
+
+        .content-section {
+            padding: 6rem 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 3rem;
+            letter-spacing: -0.02em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-bottom: 6rem;
+        }
+
+        .info-card {
+            border-left: 3px solid var(--accent);
+            padding-left: 2rem;
+        }
+
+        .info-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .info-card p {
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 6rem;
+        }
+
+        .media-item {
+            border-radius: 1rem;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #10b981, #3b82f6);
+            position: relative;
+        }
+
+        .media-item img,
+        .media-item video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .media-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            font-size: 3rem;
+            color: white;
+        }
+
+        .process-list {
+            list-style: none;
+            counter-reset: process-counter;
+        }
+
+        .process-list li {
+            counter-increment: process-counter;
+            margin-bottom: 3rem;
+            padding-left: 4rem;
+            position: relative;
+        }
+
+        .process-list li::before {
+            content: counter(process-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--text);
+            color: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.5rem;
+        }
+
+        .process-list h4 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .process-list p {
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .cta-banner {
+            background: var(--surface);
+            border: 2px solid var(--text);
+            border-radius: 2rem;
+            padding: 4rem;
+            text-align: center;
+            margin: 6rem 0;
+        }
+
+        .cta-banner h3 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 900;
+        }
+
+        .cta-banner p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem 3rem;
+            background: var(--text);
+            color: var(--bg);
+            border: none;
+            border-radius: 100px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        footer {
+            padding: 4rem;
+            border-top: 1px solid var(--text);
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1.5rem 2rem;
+            }
+
+            .hero-service {
+                padding: 8rem 2rem 4rem;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .content-section {
+                padding: 4rem 2rem;
+            }
+
+            .media-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-banner {
+                padding: 3rem 2rem;
+            }
+
+            .process-list li {
+                padding-left: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">MURAL BROS</a>
+        <div class="nav-right">
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="index.html#work">Services</a>
+                <a href="index.html#contact">Contact</a>
+            </nav>
+            <button class="theme-btn" onclick="toggleTheme()">◐</button>
+        </div>
+    </header>
+
+    <section class="hero-service">
+        <div class="hero-content">
+            <a href="index.html" class="back-link">← Back to Services</a>
+            <div class="service-icon-large">🏠</div>
+            <h1>Internal Murals</h1>
+            <p class="lead">Transform your interior spaces with breathtaking custom murals that reflect your personality, brand, or vision. From residential living rooms to corporate offices, we create art that lives with you.</p>
+        </div>
+    </section>
+
+    <section class="content-section">
+        <h2 class="section-title">What We Offer</h2>
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>Residential Spaces</h3>
+                <p>Bring your home to life with custom murals in living rooms, bedrooms, children's rooms, and hallways. Perfect for creating focal points and expressing your unique style.</p>
+            </div>
+            <div class="info-card">
+                <h3>Commercial Projects</h3>
+                <p>Elevate your business with branded murals, artistic installations in lobbies, conference rooms, and public spaces that leave lasting impressions on clients and employees.</p>
+            </div>
+            <div class="info-card">
+                <h3>Hospitality & Retail</h3>
+                <p>Create unforgettable experiences in hotels, restaurants, cafes, and retail stores with immersive murals that tell your brand story and enhance customer engagement.</p>
+            </div>
+        </div>
+
+        <h2 class="section-title">Our Work</h2>
+        <div class="media-grid">
+            <div class="media-item">
+				<video class="image-placeholder" autoplay muted loop>
+                    <source src="Video_Internal001.mp4" type="video/mp4">   
+                    Your browser does not support the video tag.
+                </video>
+                <div class="media-placeholder">🎨</div>
+            </div>
+            <div class="media-item">
+			    <img class="image-placeholder" src="./Bears.Jpg" alt="Bears" />
+                <div class="media-placeholder">🖼️</div>
+            </div>
+            <div class="media-item">
+			    <img class="image-placeholder" src="./simba.Jpg" alt="simba" />
+                <div class="media-placeholder">🏠</div>
+            </div>
+            <div class="media-item">
+				<img class="image-placeholder" src="./02.Jpg" alt="Mural red Triangles" />
+                <div class="media-placeholder">✨</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Our Process</h2>
+        <ul class="process-list">
+            <li>
+                <h4>Consultation & Concept</h4>
+                <p>We meet with you to understand your vision, space requirements, style preferences, and budget. Our team develops initial concepts and mood boards for your approval.</p>
+            </li>
+            <li>
+                <h4>Design Development</h4>
+                <p>Once the concept is approved, we create detailed designs and color schemes. We provide digital mockups showing how the mural will look in your actual space.</p>
+            </li>
+            <li>
+                <h4>Surface Preparation</h4>
+                <p>We prepare your walls to perfection - filling holes, sanding, priming, and ensuring a flawless canvas for the artwork. Proper preparation is key to longevity.</p>
+            </li>
+            <li>
+                <h4>Mural Creation</h4>
+                <p>Our skilled artists bring the design to life using premium paints and techniques. We work efficiently while maintaining meticulous attention to detail throughout the process.</p>
+            </li>
+            <li>
+                <h4>Final Touches & Protection</h4>
+                <p>We apply protective sealants, perform quality checks, and ensure every detail is perfect. Your space is left clean and ready to enjoy immediately.</p>
+            </li>
+        </ul>
+
+        <div class="cta-banner">
+            <h3>Ready to Transform Your Space?</h3>
+            <p>Let's discuss your internal mural project and create something extraordinary together.</p>
+            <a href="index.html#contact" class="btn">Get Started →</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 Mural Bros. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        }
+
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+</body>
+</html>

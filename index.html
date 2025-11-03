@@ -116,6 +116,13 @@
             transition: all 0.3s ease;
         }
 
+        .image-placeholder {
+             width: 100%;
+            height: 100%;
+            object-fit: cover; /* makes image fill the box without stretching */
+            display: block;
+    }
+
         .theme-btn:hover {
             transform: rotate(180deg);
             background: var(--text);
@@ -292,7 +299,7 @@
         }
 
         .project-visual:hover::before {
-            opacity: 0.7;
+            opacity: 0;
         }
 
         .visual-1 { background: linear-gradient(135deg, #10b981, #3b82f6); }
@@ -633,6 +640,7 @@
             .modal-body {
                 padding: 2rem;
             }
+			
         }
     </style>
 </head>
@@ -672,12 +680,18 @@
     <section class="projects" id="work">
         <article class="project-item">
             <div class="project-content">
-                <div class="project-number">01 / PROJECT</div>
-                <h2 class="project-title">Urban Canvas</h2>
-                <p class="project-desc">A vibrant celebration of city life, transforming a concrete wall into a dynamic ecosystem of color and movement.</p>
-                <a href="#" class="project-link" onclick="openModal(event)">View Case Study →</a>
+                <div class="project-number">Internal Murals</div>
+<h2 class="project-title">Mural Showcase</h2>
+<p class="project-desc">
+  Explore our stunning range of hand-painted indoor murals, each designed to transform ordinary walls into breathtaking works of art. From bold feature walls to subtle artistic touches, discover how we can bring your space to life with creativity and colour.
+</p>
+<a href="./InternalMurals.html" class="project-link">View Internal Murals →</a>
+
             </div>
-            <div class="project-visual visual-1"></div>
+            <div class="project-visual visual-1">
+			 <img class="image-placeholder" src="./Bears.Jpg" alt="simba" />
+
+			</div>
         </article>
 
         <article class="project-item">
