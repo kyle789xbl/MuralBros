@@ -928,7 +928,8 @@
             }
         }
 
-         function handleSubmit(e) {
+       
+                function handleSubmit(e) {
             e.preventDefault();
             
             const submitBtn = e.target.querySelector('.submit-btn');
@@ -938,8 +939,15 @@
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData);
             
+            // Add subject parameter with proper encoding
+            const subjectInput = document.createElement('input');
+            subjectInput.type = 'hidden';
+            subjectInput.name = 'subject';
+            subjectInput.value = "We've received your message";
+            e.target.appendChild(subjectInput);
+            
             // Send email using EmailJS with sendForm method
-            emailjs.sendForm('service_yblcglf', 'template_s1czfso', e.target)
+            emailjs.sendForm('service_94rye0e', 'template_s1czfso', e.target)
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
                     
