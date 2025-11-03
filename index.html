@@ -928,7 +928,7 @@
             }
         }
 
-             function handleSubmit(e) {
+         function handleSubmit(e) {
             e.preventDefault();
             
             const submitBtn = e.target.querySelector('.submit-btn');
@@ -938,19 +938,8 @@
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData);
             
-            // EmailJS template parameters
-            const templateParams = {
-                from_name: `${data.firstName} ${data.lastName}`,
-                from_email: data.email,
-                phone: data.phone || 'Not provided',
-                project_type: data.projectType,
-                budget: data.budget,
-                message: data.message,
-                to_name: 'Mural Bros Team'
-            };
-            
-            // Send email using EmailJS
-            emailjs.send('MfdhLa7O8nrdralBa', 'template_s1czfso', templateParams)
+            // Send email using EmailJS with sendForm method
+            emailjs.sendForm('service_yblcglf', 'template_s1czfso', e.target)
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
                     
@@ -972,7 +961,6 @@
                     submitBtn.textContent = 'Submit Project Request';
                 });
         }
-
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeModal();
