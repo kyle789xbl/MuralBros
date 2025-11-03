@@ -643,6 +643,18 @@
 			
         }
     </style>
+
+<script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+<script type="text/javascript">
+   (function(){
+      emailjs.init({
+        publicKey: "MfdhLa7O8nrdralBa",
+      });
+   })();
+</script>
+
 </head>
 <body>
     <div class="cursor-follower" id="cursor"></div>
@@ -916,25 +928,49 @@
             }
         }
 
-        function handleSubmit(e) {
+             function handleSubmit(e) {
             e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
             
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData);
             
-            console.log('Form submitted:', data);
+            // EmailJS template parameters
+            const templateParams = {
+                from_name: `${data.firstName} ${data.lastName}`,
+                from_email: data.email,
+                phone: data.phone || 'Not provided',
+                project_type: data.projectType,
+                budget: data.budget,
+                message: data.message,
+                to_name: 'Mural Bros Team'
+            };
             
-            document.getElementById('modalContent').innerHTML = `
-                <div class="success-message">
-                    <h3>🎨 Thank You!</h3>
-                    <p>We've received your project request and will get back to you within 48 hours.</p>
-                    <p style="margin-top: 2rem;">Check your email at <strong>${data.email}</strong> for confirmation.</p>
-                </div>
-            `;
-            
-            setTimeout(() => {
-                closeModal();
-            }, 3000);
+            // Send email using EmailJS
+            emailjs.send('service_yblcglf', 'template_i7tgdfi', templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    
+                    document.getElementById('modalContent').innerHTML = `
+                        <div class="success-message">
+                            <h3>🎨 Thank You!</h3>
+                            <p>We've received your project request and will get back to you within 48 hours.</p>
+                            <p style="margin-top: 2rem;">Check your email at <strong>${data.email}</strong> for confirmation.</p>
+                        </div>
+                    `;
+                    
+                    setTimeout(() => {
+                        closeModal();
+                    }, 3000);
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    alert('Sorry, there was an error sending your message. Please try again or contact us directly.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Project Request';
+                });
         }
 
         document.addEventListener('keydown', (e) => {
