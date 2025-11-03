@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mural Bros - Artistic Walls</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #fafafa;
+            --surface: #ffffff;
+            --text: #0a0a0a;
+            --text-muted: #737373;
+            --accent: #10b981;
+            --accent-2: #3b82f6;
+            --accent-3: #f59e0b;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --surface: #171717;
+            --text: #fafafa;
+            --text-muted: #a3a3a3;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-x: hidden;
+        }
+
+        .cursor-follower {
+            width: 400px;
+            height: 400px;
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15), transparent 70%);
+            transition: transform 0.3s ease;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 2rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(250, 250, 250, 0.8);
+            border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] header {
+            background: rgba(10, 10, 10, 0.8);
+            border-bottom: 1px solid rgba(250, 250, 250, 0.1);
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: opacity 0.3s ease;
+        }
+
+        nav a:hover {
+            opacity: 0.6;
+        }
+
+        .theme-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--text);
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-btn:hover {
+            transform: rotate(180deg);
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4rem;
+            position: relative;
+        }
+
+        .hero-title {
+            font-size: clamp(4rem, 15vw, 12rem);
+            font-weight: 900;
+            line-height: 0.9;
+            letter-spacing: -0.04em;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-title span {
+            display: block;
+        }
+
+        .title-mural {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title-bros {
+            -webkit-text-stroke: 2px var(--text);
+            -webkit-text-fill-color: transparent;
+            margin-left: 10vw;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: var(--text-muted);
+            animation: scroll-anim 2s infinite;
+        }
+
+        @keyframes scroll-anim {
+            0%, 100% { transform: scaleY(0.3); transform-origin: top; }
+            50% { transform: scaleY(1); }
+        }
+
+        .marquee-section {
+            padding: 8rem 0;
+            overflow: hidden;
+            border-top: 1px solid var(--text);
+            border-bottom: 1px solid var(--text);
+        }
+
+        .marquee {
+            display: flex;
+            white-space: nowrap;
+            animation: marquee 20s linear infinite;
+        }
+
+        .marquee span {
+            font-size: 6rem;
+            font-weight: 900;
+            padding: 0 2rem;
+            opacity: 0.1;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .projects {
+            padding: 10rem 4rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .project-item {
+            margin-bottom: 15rem;
+            position: relative;
+        }
+
+        .project-item:nth-child(even) .project-content {
+            margin-left: auto;
+        }
+
+        .project-content {
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+
+        .project-number {
+            font-size: 1rem;
+            color: var(--text-muted);
+            letter-spacing: 0.15em;
+            margin-bottom: 1rem;
+        }
+
+        .project-title {
+            font-size: 4rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.5rem;
+            line-height: 1;
+        }
+
+        .project-desc {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text);
+            border: 2px solid var(--text);
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .project-link:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .project-visual {
+            width: 100%;
+            height: 600px;
+            position: relative;
+            border-radius: 2rem;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .project-visual:hover {
+            transform: scale(1.02);
+        }
+
+        .project-visual::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.8), rgba(59, 130, 246, 0.6));
+            mix-blend-mode: multiply;
+            transition: opacity 0.6s ease;
+        }
+
+        .project-visual:hover::before {
+            opacity: 0.7;
+        }
+
+        .visual-1 { background: linear-gradient(135deg, #10b981, #3b82f6); }
+        .visual-2 { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+        .visual-3 { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+
+        .cta-section {
+            padding: 15rem 4rem;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: clamp(3rem, 8vw, 8rem);
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            margin-bottom: 3rem;
+            line-height: 1;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: var(--text);
+            color: var(--bg);
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        footer {
+            padding: 4rem;
+            border-top: 1px solid var(--text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .social {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .social a {
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .social a:hover {
+            background: var(--text);
+            color: var(--bg);
+            transform: translateY(-5px);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: var(--surface);
+            border-radius: 1.5rem;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--text);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 2.5rem;
+            border-bottom: 1px solid var(--text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+
+        .close-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid var(--text);
+            background: transparent;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: var(--text);
+            color: var(--bg);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 2.5rem;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--text);
+            background: transparent;
+            color: var(--text);
+            font-size: 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-weight: 400;
+            text-transform: none;
+            font-size: 0.95rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.5rem;
+            background: var(--text);
+            color: var(--bg);
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .success-message h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-message p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1.5rem 2rem;
+            }
+
+            .hero {
+                padding: 0 2rem;
+            }
+
+            .hero-title {
+                font-size: 3.5rem;
+            }
+
+            .title-bros {
+                margin-left: 0;
+            }
+
+            .marquee span {
+                font-size: 3rem;
+            }
+
+            .projects {
+                padding: 5rem 2rem;
+            }
+
+            .project-item {
+                margin-bottom: 8rem;
+            }
+
+            .project-title {
+                font-size: 2.5rem;
+            }
+
+            .project-visual {
+                height: 400px;
+            }
+
+            .cta-section {
+                padding: 8rem 2rem;
+            }
+
+            .cta-title {
+                font-size: 2.5rem;
+            }
+
+            footer {
+                flex-direction: column;
+                gap: 2rem;
+                padding: 3rem 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .modal {
+                border-radius: 1rem;
+            }
+
+            .modal-header {
+                padding: 2rem;
+            }
+
+            .modal-title {
+                font-size: 1.8rem;
+            }
+
+            .modal-body {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor-follower" id="cursor"></div>
+
+    <header>
+        <div class="logo">MURAL BROS</div>
+        <div class="nav-right">
+            <nav>
+                <a href="#work">Work</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </nav>
+            <button class="theme-btn" onclick="toggleTheme()">◐</button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1 class="hero-title">
+            <span class="title-mural">MURAL</span>
+            <span class="title-bros">BROS</span>
+        </h1>
+        <div class="scroll-indicator">
+            Scroll
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <div class="marquee-section">
+        <div class="marquee">
+            <span>WALLS • ART • DESIGN • MURALS • </span>
+            <span>WALLS • ART • DESIGN • MURALS • </span>
+        </div>
+    </div>
+
+    <section class="projects" id="work">
+        <article class="project-item">
+            <div class="project-content">
+                <div class="project-number">01 / PROJECT</div>
+                <h2 class="project-title">Urban Canvas</h2>
+                <p class="project-desc">A vibrant celebration of city life, transforming a concrete wall into a dynamic ecosystem of color and movement.</p>
+                <a href="#" class="project-link" onclick="openModal(event)">View Case Study →</a>
+            </div>
+            <div class="project-visual visual-1"></div>
+        </article>
+
+        <article class="project-item">
+            <div class="project-content">
+                <div class="project-number">02 / PROJECT</div>
+                <h2 class="project-title">Sunset Dreams</h2>
+                <p class="project-desc">Capturing the ephemeral beauty of golden hour in a permanent masterpiece that brings warmth to any space.</p>
+                <a href="#" class="project-link">View Case Study →</a>
+            </div>
+            <div class="project-visual visual-2"></div>
+        </article>
+
+        <article class="project-item">
+            <div class="project-content">
+                <div class="project-number">03 / PROJECT</div>
+                <h2 class="project-title">Digital Nature</h2>
+                <p class="project-desc">Where technology meets organic forms. A fusion of the natural world with contemporary digital aesthetics.</p>
+                <a href="#" class="project-link">View Case Study →</a>
+            </div>
+            <div class="project-visual visual-3"></div>
+        </article>
+    </section>
+
+    <section class="cta-section" id="contact">
+        <h2 class="cta-title">Let's Paint<br>Your Vision</h2>
+        <button class="cta-btn" onclick="openModal(event)">Start a Project →</button>
+    </section>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Start Your Project</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalContent">
+                <form id="contactForm" onsubmit="handleSubmit(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="projectType">Project Type</label>
+                        <select id="projectType" name="projectType" required>
+                            <option value="">Select a project type</option>
+                            <option value="residential">Residential Mural</option>
+                            <option value="commercial">Commercial Space</option>
+                            <option value="outdoor">Outdoor Wall</option>
+                            <option value="custom">Custom Project</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="budget">Estimated Budget</label>
+                        <select id="budget" name="budget" required>
+                            <option value="">Select your budget range</option>
+                            <option value="1k-5k">$1,000 - $5,000</option>
+                            <option value="5k-10k">$5,000 - $10,000</option>
+                            <option value="10k-25k">$10,000 - $25,000</option>
+                            <option value="25k+">$25,000+</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Project Description</label>
+                        <textarea id="message" name="message" placeholder="Tell us about your vision, wall dimensions, style preferences, timeline..." required></textarea>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">I agree to be contacted about my project and understand Mural Bros will respond within 48 hours</label>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Submit Project Request</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-left">
+            © 2025 Mural Bros. Transforming spaces worldwide.
+        </div>
+        <div class="social">
+            <a href="#" aria-label="Instagram">IG</a>
+            <a href="#" aria-label="Behance">BE</a>
+            <a href="#" aria-label="LinkedIn">IN</a>
+        </div>
+    </footer>
+
+    <script>
+        const cursor = document.getElementById('cursor');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.transform = `translate(${e.clientX - 200}px, ${e.clientY - 200}px)`;
+        });
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        }
+
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.project-item').forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(50px)';
+            item.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            observer.observe(item);
+        });
+
+        function openModal(e) {
+            e.preventDefault();
+            document.getElementById('modalOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+            setTimeout(() => {
+                document.getElementById('contactForm').reset();
+                document.getElementById('modalContent').innerHTML = `
+                    <form id="contactForm" onsubmit="handleSubmit(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" name="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone</label>
+                                <input type="tel" id="phone" name="phone">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="projectType">Project Type</label>
+                            <select id="projectType" name="projectType" required>
+                                <option value="">Select a project type</option>
+                                <option value="residential">Residential Mural</option>
+                                <option value="commercial">Commercial Space</option>
+                                <option value="outdoor">Outdoor Wall</option>
+                                <option value="custom">Custom Project</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="budget">Estimated Budget</label>
+                            <select id="budget" name="budget" required>
+                                <option value="">Select your budget range</option>
+                                <option value="1k-5k">$1,000 - $5,000</option>
+                                <option value="5k-10k">$5,000 - $10,000</option>
+                                <option value="10k-25k">$10,000 - $25,000</option>
+                                <option value="25k+">$25,000+</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Project Description</label>
+                            <textarea id="message" name="message" placeholder="Tell us about your vision, wall dimensions, style preferences, timeline..." required></textarea>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="terms" name="terms" required>
+                            <label for="terms">I agree to be contacted about my project and understand Mural Bros will respond within 48 hours</label>
+                        </div>
+
+                        <button type="submit" class="submit-btn">Submit Project Request</button>
+                    </form>
+                `;
+            }, 300);
+        }
+
+        function closeModalOnOverlay(e) {
+            if (e.target === document.getElementById('modalOverlay')) {
+                closeModal();
+            }
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            console.log('Form submitted:', data);
+            
+            document.getElementById('modalContent').innerHTML = `
+                <div class="success-message">
+                    <h3>🎨 Thank You!</h3>
+                    <p>We've received your project request and will get back to you within 48 hours.</p>
+                    <p style="margin-top: 2rem;">Check your email at <strong>${data.email}</strong> for confirmation.</p>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                closeModal();
+            }, 3000);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
