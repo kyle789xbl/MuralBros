@@ -212,6 +212,13 @@
             object-fit: cover;
         }
 
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
         .media-placeholder {
             display: flex;
             align-items: center;
@@ -311,31 +318,96 @@
 
         @media (max-width: 768px) {
             header {
-                padding: 1.5rem 2rem;
+                padding: 1rem 1.5rem;
+                flex-wrap: wrap;
+            }
+
+            .nav-right {
+                gap: 1rem;
+                width: 100%;
+                justify-content: space-between;
+                margin-top: 1rem;
+            }
+
+            nav {
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+
+            nav a {
+                font-size: 0.75rem;
+                padding: 0.5rem;
+            }
+
+            .theme-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .logo {
+                font-size: 1rem;
             }
 
             .hero-service {
-                padding: 8rem 2rem 4rem;
+                padding: 8rem 1.5rem 4rem;
             }
 
             h1 {
-                font-size: 2.5rem;
+                font-size: clamp(2rem, 8vw, 2.5rem);
+            }
+
+            .lead {
+                font-size: 1.1rem;
             }
 
             .content-section {
-                padding: 4rem 2rem;
+                padding: 4rem 1.5rem;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
             }
 
             .media-grid {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
 
             .cta-banner {
-                padding: 3rem 2rem;
+                padding: 2.5rem 1.5rem;
+            }
+
+            .cta-banner h3 {
+                font-size: 1.8rem;
+            }
+
+            .cta-banner p {
+                font-size: 1rem;
+            }
+
+            .btn {
+                padding: 1.2rem 2rem;
+                font-size: 1rem;
             }
 
             .process-list li {
                 padding-left: 3rem;
+            }
+
+            .process-list li::before {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .process-list h4 {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -382,23 +454,19 @@
         <h2 class="section-title">Our Work</h2>
         <div class="media-grid">
             <div class="media-item">
-				<video class="image-placeholder" autoplay muted loop>
+                <video class="image-placeholder" autoplay muted loop>
                     <source src="Video_Internal001.mp4" type="video/mp4">   
                     Your browser does not support the video tag.
                 </video>
-                <div class="media-placeholder">🎨</div>
             </div>
             <div class="media-item">
-			    <img class="image-placeholder" src="./Bears.jpg" alt="Bears" />
-                <div class="media-placeholder">🖼️</div>
+                <img class="image-placeholder" src="./Bears.jpg" alt="Bears" />
             </div>
             <div class="media-item">
-			    <img class="image-placeholder" src="./simba.jpg" alt="simba" />
-                <div class="media-placeholder">🏠</div>
+                <img class="image-placeholder" src="./simba.jpg" alt="simba" />
             </div>
             <div class="media-item">
-				<img class="image-placeholder" src="./02.jpg" alt="Mural red Triangles" />
-                <div class="media-placeholder">✨</div>
+                <img class="image-placeholder" src="./02.jpg" alt="Mural red Triangles" />
             </div>
         </div>
 
@@ -441,12 +509,20 @@
         function toggleTheme() {
             const html = document.documentElement;
             const current = html.getAttribute('data-theme');
-            html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+            const newTheme = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
         }
 
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        // Load saved theme or use system preference
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
     </script>
 </body>
 </html>
